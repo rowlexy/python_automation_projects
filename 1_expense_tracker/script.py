@@ -2,10 +2,17 @@ from datetime import datetime
 from helper import clean_expenses_data
 from helper import add_expenses_data
 import argparse  
+import pandas as pd
 
 def data_summary(input_file):
     df = clean_expenses_data(input_file)
+    if df is None or df.empty:
+        print('No data found or invalid file.')
+        return
+    # converting date column to datetime format
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
     # Summarize by category
+    df = df.dropna(subset=['Date'])
     summary = (df.groupby('Category')['Amount'].sum())
     # Total monthly expenses
     monthly_expenses = df[df['Date'].dt.month == datetime.now().month]['Amount'].sum().round(2)
