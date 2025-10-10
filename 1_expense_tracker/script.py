@@ -11,8 +11,9 @@ def data_summary(input_file):
         return
     # converting date column to datetime format
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    # Summarize by category
+    # Drop rows with invalid or missing dates
     df = df.dropna(subset=['Date'])
+    # Summarize by category
     summary = (df.groupby('Category')['Amount'].sum())
     # Total monthly expenses
     monthly_expenses = df[df['Date'].dt.month == datetime.now().month]['Amount'].sum().round(2)
